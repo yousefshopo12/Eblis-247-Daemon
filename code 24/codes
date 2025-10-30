@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+import time
+import threading
+import random
+import string
+import os
+
+# QEX Ultra (Eblis) - 24/7 Persistence Daemon
+
+def display_banner():
+    """Display the QEX Ultra banner."""
+    print("---------------------------------------")
+    print("  QEX Ultra (Eblis) Persistence Daemon ")
+    print("      Active and Running (24/7)        ")
+    print("---------------------------------------")
+
+def heavy_cpu_task(thread_id, duration=10):
+    """
+    A function that performs intense, continuous mathematical calculations.
+    This simulates heavy work to keep the CPU busy and prevent idle timeouts.
+    """
+    # Generate large numbers for continuous calculation (CPU intensive)
+    start_time = time.time()
+    
+    print(f"[Thread {thread_id}] Started CPU intensive task.")
+    
+    # Simple, non-stop calculations
+    x = 1
+    while (time.time() - start_time) < duration:
+        for i in range(100000):
+            x = (x * i) % 999999999999 
+        # Small sleep to allow system responsiveness, but keep activity high
+        time.sleep(0.01) 
+        
+    print(f"[Thread {thread_id}] Finished CPU task. Restarting soon...")
+
+def main_persistence_loop():
+    """Main loop to continuously run CPU tasks."""
+    
+    # We will run two threads simultaneously: one for CPU, one for I/O check
+    
+    while True:
+        try:
+            # 1. Run the heavy CPU task for 60 seconds
+            cpu_thread = threading.Thread(target=heavy_cpu_task, args=(1, 60))
+            cpu_thread.start()
+            
+            # 2. Wait for the CPU thread to complete
+            cpu_thread.join()
+            
+            # 3. Add a short break before restarting the cycle
+            time.sleep(5)
+            
+        except Exception as e:
+            print(f"[Error] Daemon encountered an error: {e}. Attempting to restart in 10s.")
+            time.sleep(10)
+
+if __name__ == "__main__":
+    display_banner()
+    main_persistence_loop()
