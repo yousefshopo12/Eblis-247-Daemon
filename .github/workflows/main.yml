@@ -6,10 +6,12 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Download and install Tailscale
+      - name: Install Tailscale via Chocolatey
         run: |
-          Invoke-WebRequest https://pkgs.tailscale.com/stable/win/tailscale_latest_amd64.msi -OutFile tailscale.msi
-          Start-Process -Wait -FilePath msiexec -ArgumentList "/i tailscale.msi /quiet /norestart"
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+          Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          choco install tailscale -y
       
       - name: Connect Tailscale
         run: |
