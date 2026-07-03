@@ -1,0 +1,41 @@
+name: RDP
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Download and install Tailscale
+        run: |
+          Invoke-WebRequest https://pkgs.tailscale.com/stable/win/tailscale_latest_amd64.msi -OutFile tailscale.msi
+          Start-Process -Wait -FilePath msiexec -ArgumentList "/i tailscale.msi /quiet /norestart"
+      
+      - name: Connect Tailscale
+        run: |
+          Start-Sleep -Seconds 10
+          & "C:\Program Files\Tailscale\tailscale.exe" login --auth-key tskey-auth-krPnEjpBqF11CNTRL-G95CMHm9gaF4idMDMZLwaFZGMzHBPRvg
+      
+      - name: Enable RDP
+        run: |
+          net user kamel123 MyStrong123 /add
+          net localgroup administrators kamel123 /add
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+      
+      - name: Show connection info
+        run: |
+          Write-Host "============================================"
+          Write-Host "Tailscale connected successfully!"
+          Write-Host ""
+          & "C:\Program Files\Tailscale\tailscale.exe" status
+          Write-Host ""
+          Write-Host "Username: kamel123"
+          Write-Host "Password: MyStrong123"
+          Write-Host "============================================"
+          Write-Host ""
+          Write-Host "Go to https://login.tailscale.com/admin/machines"
+          Write-Host "Find the IPv4 address (100.x.x.x) and connect via RDP"
+          Write-Host ""
+          Write-Host "Keeping connection alive..."
+          ping -t localhost
