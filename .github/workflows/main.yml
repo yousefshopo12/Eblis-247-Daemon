@@ -16,7 +16,7 @@ jobs:
       - name: Connect Tailscale
         run: |
           Start-Sleep -Seconds 10
-          & "C:\Program Files\Tailscale\tailscale.exe" login --auth-key tskey-auth-krPnEjpBqF11CNTRL-G95CMHm9gaF4idMDMZLwaFZGMzHBPRvg
+          & "C:\Program Files\Tailscale\tailscale.exe" login --auth-key tskey-auth-kzMEtsZRZu11CNTRL-Jubft86aAxUzUSywhQqDwU1H57ghHWgvV
       
       - name: Enable RDP
         run: |
